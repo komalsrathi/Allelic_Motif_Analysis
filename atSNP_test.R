@@ -74,10 +74,21 @@ plotMotifMatch(snp.tbl = atsnp.scores$snp.tbl,
 
 # ----------------------------------- additional analysis ---------------------------------------------- #
 
+# get the motifs that have minimum pvalue for each rsid
 library(plyr)
 atsnp.result.sub = as.data.frame(atsnp.result.sub)
-# get the motifs that have minimum pvalue for each rsid
 tt = ddply(.data = atsnp.result.sub,.variables =  .(snpid), summarise, x = min(pval_rank))
 tt = merge(tt, atsnp.result.sub, by.x=c('snpid','x'), by.y=c('snpid','pval_rank'))
 tt = tt[order(tt$snpid,tt$x),]
 tt.count = count_(x = tt,vars = 'motif',sort = TRUE)
+
+# compute ranks for atsnp.result
+ranks = ddply(atsnp.result,.(motif),transform,Order = rank(pval_rank))
+ranks.mat <- dcast(data = ranks, formula = motif~snpid, value.var = 'Order')
+rownames(ranks.mat) <- ranks.mat$motif
+ranks.mat <- ranks.mat[,-1]
+ranks.mat$mean = rowMeans(ranks.mat)
+ranks.mat$min <- apply(ranks.mat,1,FUN = min)
+ranks.mat$max <- apply(ranks.mat,1,FUN = max)
+ranks.mat$sum <- apply(ranks.mat,1,FUN = sum)
+# motif.ranks <- ranks.mat[,5270:5273]
