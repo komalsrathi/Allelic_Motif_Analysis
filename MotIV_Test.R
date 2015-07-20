@@ -30,7 +30,7 @@ mdb.human <- MotifDb[grep("Hsapiens",values(MotifDb)$organism),]
 system("grep -e '^ID' -e '^[0-9]' matrix.dat | sed -e 's/ \+/\t/g' -e 's/^ID/XX\n&/' -e 's/ID/DE/g' -e 's/\t[a-zA-Z]$//g' -e 's/^0//g' -e 's/\$/\_/g' | sed '1d' | sed '$ a\XX' > MotIV_transfac.txt")
 
 # import transfac data, get vertebrate motifs & convert to proportions 
-motifs.transfac <- readPWMfile(file = 'meme_matrix_files/MotIV_transfac.txt')
+motifs.transfac <- readPWMfile(file = 'MotIV_transfac.txt')
 motifs.transfac <- sapply(X = motifs.transfac, FUN = function(x) x/rowSums(x))
 motifs.transfac <- do.call(list, rapply(motifs.transfac, function(x) ifelse(is.nan(x),0,x), how="replace"))
 motifs.transfac <- motifs.transfac[grep('^V_',names(motifs.transfac))] # vertebrates only
