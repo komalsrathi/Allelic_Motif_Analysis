@@ -92,3 +92,20 @@ ranks.mat$min <- apply(ranks.mat,1,FUN = min)
 ranks.mat$max <- apply(ranks.mat,1,FUN = max)
 ranks.mat$sum <- apply(ranks.mat,1,FUN = sum)
 # motif.ranks <- ranks.mat[,5270:5273]
+
+# top dysregulated SNP
+atsnp.result$pval_ref_adj = p.adjust(atsnp.result$pval_ref,method='BH')
+atsnp.result$pval_snp_adj = p.adjust(atsnp.result$pval_snp,method='BH')
+top <- as.data.frame(atsnp.result) %>% 
+  filter((pval_snp_adj < 0.05 | pval_ref_adj < 0.05)) %>% 
+  filter(p.adjust(pval_diff,method='bonferroni') < 0.05) %>% 
+  group_by(snpid) %>% 
+  filter(pval_diff ==min(pval_diff)) #%>% 
+#  count(motif)# %>% filter(n>2)
+
+top_mitf <- as.data.frame(atsnp.result) %>% 
+  filter((pval_snp_adj < 0.05 | pval_ref_adj < 0.05)) %>% 
+ # filter(p.adjust(pval_diff,method='bonferroni') < 0.05) %>% 
+ filter(grepl('MITF',motif))
+#  count(motif)# %>% filter(n>2)
+
